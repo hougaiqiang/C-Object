@@ -1,87 +1,88 @@
 /*****************************************************
-*ÎÄ¼þÃû£ºmain.c
-*ÎÄ¼þÃèÊö£º³ÌÐòÈë¿Ú£¬³ÌÐòÖ÷Á÷³Ì
-*°æ±¾£ºV0.1
-*×÷Õß£ººî¸ÄÇ¿
-*Ê±¼ä£º2019/02/15
-*ËµÃ÷£ºÊµÑéCÃæ¶Ô¶ÔÏóµÄ±à³Ì
+*æ–‡ä»¶åï¼šmain.c
+*æ–‡ä»¶æè¿°ï¼šç¨‹åºå…¥å£ï¼Œç¨‹åºä¸»æµç¨‹
+*ç‰ˆæœ¬ï¼šV0.1
+*ä½œè€…ï¼šä¾¯æ”¹å¼º
+*æ—¶é—´ï¼š2019/02/15
+*è¯´æ˜Žï¼šå®žéªŒCé¢å¯¹å¯¹è±¡çš„ç¼–ç¨‹
 ******************************************************/
-/*********************Í·ÎÄ¼þ°üº¬**********************/
+/*********************å¤´æ–‡ä»¶åŒ…å«**********************/
 #include <stdio.h>
 #include <stdlib.h>
-#include <thr/xthreads.h>
+#include <pthread.h>
 #include "shape.h"
 
-/********************È«¾Ö±äÁ¿¶¨Òå*********************/
+/********************å…¨å±€å˜é‡å®šä¹‰*********************/
 
 
-/**********************º¯ÊýÉùÃ÷***********************/
-void Thd_place(void);
-void Thd_rectangle(void);
+/**********************å‡½æ•°å£°æ˜Ž***********************/
+void *Thd_place(void *arg);
+void *Thd_rectangle(void *arg);
 
 /*****************************************************
-*º¯ÊýÃû³Æ£ºmain
-*Ãè    Êö£º³ÌÐòÈë¿Ú
-*²Î    Êý£ºÎÞ
-*²ÎÊýÃèÊö£ºÎÞ
-*ÈÕ    ÆÚ£º2019/02/16
-*×÷    Õß£ººî¸ÄÇ¿
+*å‡½æ•°åç§°ï¼šmain
+*æ    è¿°ï¼šç¨‹åºå…¥å£
+*å‚    æ•°ï¼šæ— 
+*å‚æ•°æè¿°ï¼šæ— 
+*æ—¥    æœŸï¼š2019/02/16
+*ä½œ    è€…ï¼šä¾¯æ”¹å¼º
 *****************************************************/
 int main(void)
 {
-	_Thrd_t ProcessPlaceId;
-	_Thrd_t ProcessRectId;
+	pthread_t ProcessPlaceId;
+	pthread_t ProcessRectId;
+	pid_t pid;
+	pthread_t mtid;
 
-	switch (_Thrd_create(&ProcessPlaceId, Thd_place, NULL))
+	mtid = pthread_self();
+
+	if(0 == pthread_create(&ProcessPlaceId, NULL, Thd_place, NULL))
 	{
-	case _Thrd_success:
-		printf("create thread place start \n");
-		break;
-	case _Thrd_nomem:
-		printf("malloc thread place mem faild \n");
-		break;
-	case _Thrd_error:
+		printf("create thread place start \n");	
+	}
+	else
+	{
 		printf("create thread place faile \n");
 		exit(1);
 	}
+	
 
-	switch (_Thrd_create(&ProcessRectId, Thd_rectangle, NULL))
+	if(0 == pthread_create(&ProcessRectId, NULL, Thd_rectangle, NULL))
 	{
-	case _Thrd_success:
-		printf("create thread rectangle start \n");
-		break;
-	case _Thrd_nomem:
-		printf("malloc thread rectangle mem faild \n");
-		break;
-	case _Thrd_error:
+		printf("create thread rectangle start \n");	
+	}
+	else
+	{
 		printf("create thread rectangle faile \n");
 		exit(1);
 	}
-	_Thrd_join(ProcessPlaceId, NULL);
-	_Thrd_join(ProcessRectId, NULL);
 
 	system("pause");
 	return 0;
 }
 
-void Thd_place(void)
+void *Thd_place(void *arg)
 {
 	struPlace struMyPlace;
 	Init_struPlace(&struMyPlace);
 	printf("struMyPlace\n");
-	/*¶ÔÏó³õÊ¼»¯*/
+	/*å¯¹è±¡åˆå§‹åŒ–*/
 	struMyPlace.set(&struMyPlace, 10, 10);
-	/*´òÓ¡¶ÔÏó*/
+	/*æ‰“å°å¯¹è±¡*/
 	struMyPlace.print(&struMyPlace);
-	/*²Ù×÷¶ÔÏó³ÉÔ±*/
+	/*æ“ä½œå¯¹è±¡æˆå‘˜*/
 	struMyPlace.move(&struMyPlace, 10, -5);
-	/*´òÓ¡¶ÔÏó*/
+	/*æ‰“å°å¯¹è±¡*/
 	struMyPlace.print(&struMyPlace);
 
-	while (1);
+	while (1)
+	{
+		sleep(1);
+	}
+	return NULL;
 }
 
-void Thd_rectangle(void)
+void *Thd_rectangle(void *arg)
 {
 	Rectangle *pstruMyRectangle = malloc(sizeof(Rectangle));
 	int RectArea = 0;
@@ -97,11 +98,15 @@ void Thd_rectangle(void)
 	pstruMyRectangle->print(pstruMyRectangle);
 
 	printf("dual\n");
-	pstruMyRectangle->print = pstruMyRectangle->place.print;
-	pstruMyRectangle->print(&pstruMyRectangle->place);
+	pstruMyRectangle->print = (void *)pstruMyRectangle->place.print;
+	pstruMyRectangle->print((struct Rectangle *)&pstruMyRectangle->place);
 	free(pstruMyRectangle);
 
-	while (1);
+	while (1)
+	{
+		sleep(1);
+	}
+	return NULL;
 }
 
-/**********************ÎÄ¼þ½áÊø***********************/
+/**********************æ–‡ä»¶ç»“æŸ***********************/

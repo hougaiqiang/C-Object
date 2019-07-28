@@ -1,31 +1,31 @@
 /*****************************************************
-*ÎÄ¼şÃû: shape.h
-*ÎÄ¼şÃèÊö£ºshapeÀà¶¨Òå
-*°æ±¾£ºV0.1
-*×÷Õß£ººî¸ÄÇ¿
-*Ê±¼ä£º2019/02/15
-*ËµÃ÷£ºÊµÑéCÃæ¶Ô¶ÔÏóµÄ±à³Ì
+*æ–‡ä»¶å: shape.h
+*æ–‡ä»¶æè¿°ï¼šshapeç±»å®šä¹‰
+*ç‰ˆæœ¬ï¼šV0.1
+*ä½œè€…ï¼šä¾¯æ”¹å¼º
+*æ—¶é—´ï¼š2019/02/15
+*è¯´æ˜ï¼šå®éªŒCé¢å¯¹å¯¹è±¡çš„ç¼–ç¨‹
 ******************************************************/
 
 #ifndef _SHAPE_H
 #define _SHAPE_H
 
-/*********************Í·ÎÄ¼ş°üº¬**********************/
+/*********************å¤´æ–‡ä»¶åŒ…å«**********************/
 
-/***********************ºê¶¨Òå************************/
+/***********************å®å®šä¹‰************************/
 #define PUBLIC 0
 #define PRIVATE 1
 #define PROTECT 2
-/**********************ÀàĞÍ¶¨Òå***********************/
-typedef struct{
+/**********************ç±»å‹å®šä¹‰***********************/
+typedef struct struPlace{
 	int x;
 	int y;
-	void(*set)(struct struPlace*, int, int);
-	void(*move)(struct struPlace*, int, int);
-	void(*print)(struct struPlace*);
+	void(*set)(struct struPlace *self, int x, int y);
+	void(*move)(struct struPlace *self, int x, int y);
+	void(*print)(struct struPlace* self);
 }struPlace;
 
-typedef struct{
+typedef struct Rectangle{
 	struPlace place;
 	int width;
 	int high;
@@ -38,26 +38,26 @@ typedef struct{
 	int (*calc_area)(struct Rectangle *self);
 	void(*set)(struct Rectangle *self, int x, int y, int width, int high);
 }Rectangle;
-/**********************º¯ÊıÉùÃ÷***********************/
+/**********************å‡½æ•°å£°æ˜***********************/
 
 
 /*****************************************************
-*º¯ÊıÃû³Æ£ºInit_struPlace
-*Ãè    Êö£º³õÊ¼»¯¶ÔÏóstruPlace
+*å‡½æ•°åç§°ï¼šInit_struPlace
+*æ    è¿°ï¼šåˆå§‹åŒ–å¯¹è±¡struPlace
 *****************************************************/
-void Init_struPlace(struPlace *self);
+extern void Init_struPlace(struPlace *self);
 
 
 /*****************************************************
-*º¯ÊıÃû³Æ£ºInit_struPlace
-*Ãè    Êö£º³õÊ¼»¯¾ØĞÎ¶ÔÏó·½·¨
+*å‡½æ•°åç§°ï¼šInit_struPlace
+*æ    è¿°ï¼šåˆå§‹åŒ–çŸ©å½¢å¯¹è±¡æ–¹æ³•
 *****************************************************/
-void Init_Rectangle(Rectangle *self);
+extern void Init_Rectangle(Rectangle *self);
 
 
-/********************Íâ²¿±äÁ¿ÉùÃ÷*********************/
+/********************å¤–éƒ¨å˜é‡å£°æ˜*********************/
 
 
-/********************Íâ²¿º¯ÊıÉùÃ÷*********************/
+/********************å¤–éƒ¨å‡½æ•°å£°æ˜*********************/
 
 #endif // __SHAPE_H
